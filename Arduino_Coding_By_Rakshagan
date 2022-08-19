@@ -1,0 +1,155 @@
+# RFID-Based-Class-Attendance-By-Rakshagan
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+#include <SoftwareSerial.h>
+SoftwareSerial SIM900A(7,8);
+
+LiquidCrystal_I2C lcd(0x27,16,2);
+    int a=0;
+    int b=0;
+int count = 0;                                          // count = 0
+char input[12];                                         // character array of size 12 
+boolean flag = 0;                                       // flag =0
+char student1[] ="2700AF3D299C"; 
+char student2[] ="2700A8AAD5F0";
+
+
+void setup()
+{
+
+   Serial.begin(9600);               // begin serial port with baud rate 9600bps
+   lcd.init();                      // initialize the lcd 
+ 
+  // Print a message to the LCD.
+  lcd.backlight();
+  lcd.setCursor(0,0);
+  lcd.print("AttendanceSystem");
+SIM900A.begin(9600);   // Setting the baud rate of GSM Module  
+  Serial.begin(9600);    // Setting the baud rate of Serial Monitor (Arduino)
+  Serial.println ("SIM900A Ready");
+  delay(100);
+}
+
+void SendMessage2()
+{
+  Serial.println ("Sending Message");
+  SIM900A.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+  delay(1000);
+  Serial.println ("Set SMS Number");
+  SIM900A.println("AT+CMGS=\"+919442225312\"\r"); //Mobile phone number to send message
+  delay(1000);
+  Serial.println ("Set SMS Content");
+  SIM900A.println("Good morning, CLEMENT Entered the class");// Messsage content
+  delay(100);
+  Serial.println ("Finish");
+  SIM900A.println((char)26);// ASCII code of CTRL+Z
+  delay(1000);
+}
+
+
+void SendMessage1()
+{
+  Serial.println ("Sending Message");
+  SIM900A.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+  delay(1000);
+  Serial.println ("Set SMS Number");
+  SIM900A.println("AT+CMGS=\"+919442225312\"\r"); //Mobile phone number to send message
+  delay(1000);
+  Serial.println ("Set SMS Content");
+  SIM900A.println("Good morning, RAKSHAHAN Entered the class");// Messsage content
+  delay(100);
+  Serial.println ("Finish");
+  SIM900A.println((char)26);// ASCII code of CTRL+Z
+  delay(1000);
+}
+void loop()
+{
+
+   if(Serial.available())
+   {
+
+      count = 0;
+      while(Serial.available() && count < 12)          // Read 12 characters and store them in input array
+      {
+         input[count] = Serial.read();
+         count++;
+         delay(5);
+      }
+      lcd.setCursor(0,1);
+      
+      // Student 1 compare and sendmessage function call
+      if(!strncmp(student1, input,12))
+     {
+        lcd.clear();
+        
+        if(b==0)
+        {
+      lcd.setCursor(0,0);
+        lcd.print("Welcome-IN");
+        lcd.setCursor(0,1);
+        lcd.print("RAKSHAHAN");
+        b=1;
+        }
+        else
+        {
+        lcd.setCursor(0,0);
+        lcd.print("BYE-OUT");
+        lcd.setCursor(0,1);
+        lcd.print("RAKSHAHAN");
+        b=0;
+        }
+
+  SendMessage1();
+  delay(1000);
+  lcd.clear();
+  lcd.setCursor(0,0);
+   lcd.print("AttendanceSystem");
+      }
+
+
+    // Student 2 compare and sendmessage function call
+      else  if(!strncmp(student2, input,12))
+     {
+      lcd.clear();
+          if(a==0)
+        {
+      lcd.setCursor(0,0);
+        lcd.print("Welcome-IN");
+        lcd.setCursor(0,1);
+        lcd.print("CLEMENT");
+        a=1;
+        }
+        else
+        {
+        lcd.setCursor(0,0);
+        lcd.print("BYE-OUT");
+        lcd.setCursor(0,1);
+        lcd.print("CLEMENT");
+        a=0;
+        }
+  SendMessage2();
+  delay(1000);
+  lcd.clear();
+  lcd.setCursor(0,0);
+   lcd.print("AttendanceSystem");
+      }
+
+
+      // Invalid user Message 
+      else
+      {
+        lcd.clear();
+        lcd.setCursor(0,0);
+        lcd.print("Invalid");
+        lcd.setCursor(0,1);
+        lcd.print("User");
+      delay(1000);
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("AttendanceSystem");
+      }
+                                   
+      
+      
+   }
+}
