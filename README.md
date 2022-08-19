@@ -1,0 +1,2 @@
+# RFID-Based-Class-Attendance
+Nowadays, attendance in schools and colleges is based on paper. Sometimes this process causes errors and takes more time.  This project uses RFID technology for making a note of every student entering in a classroom and also calculates the time resides in a class.  In this system every student is allotted with an RFID tag. The attendance can be done by placing card near RFID reader and the attendance of an Individual Student will be sent to their respective parents through SMS as we have attached a SIM 900 A Module in our project
